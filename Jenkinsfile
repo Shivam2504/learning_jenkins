@@ -26,8 +26,9 @@ pipeline {
             steps {
                 script {
                     echo "Stopping and removing old container..."
-                    bat "docker stop ${CONTAINER_NAME} || true"
-                    bat "docker rm -f ${CONTAINER_NAME} || true"
+                    // Windows-compatible error suppression
+                    bat "docker stop ${CONTAINER_NAME} || exit 0"
+                    bat "docker rm -f ${CONTAINER_NAME} || exit 0"
 
                     echo "Starting new container..."
                     bat "docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:latest"
