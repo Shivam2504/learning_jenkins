@@ -9,7 +9,6 @@ pipeline {
     stages {
         stage('Pull Code') {
             steps {
-                // Pull the latest code from the main branch
                 git branch: 'main', url: 'https://github.com/Shivam2504/learning_jenkins.git'
             }
         }
@@ -26,7 +25,8 @@ pipeline {
         stage('Restart Container') {
             steps {
                 script {
-                    echo "Stopping and removing old container if exists..."
+                    echo "Stopping and removing old container..."
+                    bat "docker stop ${CONTAINER_NAME} || true"
                     bat "docker rm -f ${CONTAINER_NAME} || true"
 
                     echo "Starting new container..."
