@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     echo 'Hello laudu'
-                    sh 'docker --version'
+                    bat 'docker --version'
                 }
             }
         }
