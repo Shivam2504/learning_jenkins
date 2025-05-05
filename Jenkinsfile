@@ -1,24 +1,36 @@
 pipeline {
     agent any
+    triggers {
+        pollSCM('* * * * *')  // every minute
+    }
+
+    environment {
+        IMAGE_NAME = "my-app-image"
+        CONTAINER_NAME = "my-app-container"
+    }
 
     stages {
-        stage('Build Docker Image') {
+        stage('Pull Code') {
             steps {
-                script {
-                    echo 'Hello laudu'
-                    bat 'docker --version'
-                }
+                git 'https://github.com/Shivam2504/learning_jenkins.git'
             }
         }
 
-        // stage('Run Docker Container') {
-        //     steps {
-        //         script {
-        //             bat 'docker rm -f my-running-container || true'
-        //             bat 'docker run -d --name my-running-container -p 80:80 your-image-name:latest'
-        //         }
-        //     }
-        // }
-        
+        stage('Build Image') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME} ."
+            }
+        }
+
+        stage('Restart Container') {
+            steps {
+                script {
+                    // Stop and remove old container if exists
+                    sh "docker rm -f ${CONTAINER_NAME} || true"
+                    // Run new container
+                    sh "docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}"
+                }
+            }
+        }
     }
 }
