@@ -11,16 +11,18 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("my-html-app")
+                    dockerImage = docker.build("my-html-app:latest")
                 }
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker Container') {
             steps {
                 script {
-                    sh "docker rm -f my-html-container || true"
-                    sh "docker run -d -p 8081:80 --name my-html-container my-html-app"
+                    // Stop old container if running
+                    sh 'docker rm -f my-running-container || true'
+                    // Run new container
+                    sh 'docker run -d --name my-running-container -p 80:80 your-image-name:latest'
                 }
             }
         }
